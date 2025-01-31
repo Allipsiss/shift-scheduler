@@ -45,10 +45,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             let calendarEl = document.getElementById('calendar');
+            
+            // Check if the calendar container exists
+            if (!calendarEl) {
+                console.error('Calendar container not found!');
+                return;
+            }
+
             let calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth'
             });
+
+            // Render the calendar
             calendar.render();
+
+            // Check if the calendar is rendered
+            console.log('Calendar rendered');
         });
     </script>
 
