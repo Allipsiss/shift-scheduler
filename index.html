@@ -145,12 +145,14 @@
 
     <script>
         let selectedDate = null;
+
         document.addEventListener('DOMContentLoaded', function () {
             let calendarEl = document.getElementById('calendar');
             let calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 selectable: true,
                 dateClick: function (info) {
+                    console.log('Date Clicked:', info.dateStr); // Debugging line
                     selectedDate = info.dateStr;
                     openPopup();
                 },
@@ -159,19 +161,24 @@
         });
 
         function openPopup() {
+            console.log('Opening Popup'); // Debugging line
             document.getElementById('shift-popup').style.display = 'block';
         }
 
         function closePopup() {
+            console.log('Closing Popup'); // Debugging line
             document.getElementById('shift-popup').style.display = 'none';
         }
 
         function assignShift(shiftType) {
             if (!selectedDate) return;
 
+            console.log('Selected Date:', selectedDate); // Debugging line
             let calendarCells = document.querySelectorAll('.fc-daygrid-day');
             calendarCells.forEach(cell => {
+                console.log('Cell Date:', cell.getAttribute('data-date')); // Debugging line
                 if (cell.getAttribute('data-date') === selectedDate) {
+                    console.log('Adding class to cell:', shiftType); // Debugging line
                     cell.classList.remove('morning', 'evening', 'night', 'off');
                     cell.classList.add(shiftType);
 
@@ -181,7 +188,7 @@
                         label.classList.add('shift-label');
                         cell.appendChild(label);
                     }
-                    
+
                     switch (shiftType) {
                         case 'morning':
                             label.textContent = 'Morning';
