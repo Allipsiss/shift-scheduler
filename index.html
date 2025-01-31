@@ -29,185 +29,27 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
-        /* Fancy Buttons */
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            margin: 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        #print-button {
-            background-color: #007bff;
-            color: white;
-        }
-
-        #print-button:hover {
-            background-color: #0056b3;
-        }
-
-        .popup button {
-            padding: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            margin: 5px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .popup button.save {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .popup button.cancel {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .popup button.clear {
-            background-color: #ff9800;
-            color: white;
-        }
-
-        /* Popup Styling */
-        .popup {
-            display: none;
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-        }
-
-        /* Shift Colors */
-        .morning { background-color: #cce5ff !important; }
-        .evening { background-color: #fff3cd !important; }
-        .night { background-color: #e6ccff !important; }
-        .off { background-color: #f8f9fa !important; }
-
-        /* Shift Labels */
-        .shift-label {
-            font-size: 16px;
-            font-weight: bold;
-            color: black;
-            text-align: center;
-        }
-
-        /* Print Styling */
-        @media print {
-            #print-button, .popup {
-                display: none !important;
-            }
-            .shift-label {
-                font-size: 14px !important;
-                color: black !important;
-            }
-            #calendar-container {
-                box-shadow: none;
-                margin: 0;
-                padding: 0;
-            }
-        }
     </style>
 </head>
 <body>
 
     <h1>Shift Scheduler</h1>
 
-    <button id="print-button" onclick="window.print()">Print Schedule</button>
-
     <div id="calendar-container">
         <div id="calendar"></div>
-    </div>
-
-    <!-- Popup for Selecting Shift -->
-    <div class="popup" id="shift-popup">
-        <h3>Select Shift</h3>
-        <button class="save" onclick="assignShift('morning')">Morning</button>
-        <button class="save" onclick="assignShift('evening')">Evening</button>
-        <button class="save" onclick="assignShift('night')">Night</button>
-        <button class="clear" onclick="assignShift('off')">Off</button>
-        <button class="cancel" onclick="closePopup()">Cancel</button>
     </div>
 
     <!-- FullCalendar JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
 
     <script>
-        let selectedDate = null;
-
         document.addEventListener('DOMContentLoaded', function () {
             let calendarEl = document.getElementById('calendar');
             let calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                dateClick: function (info) {
-                    console.log('Date Clicked:', info.dateStr); // Debugging line
-                    selectedDate = info.dateStr;
-                    openPopup();
-                },
+                initialView: 'dayGridMonth'
             });
             calendar.render();
         });
-
-        function openPopup() {
-            console.log('Opening Popup'); // Debugging line
-            document.getElementById('shift-popup').style.display = 'block';
-        }
-
-        function closePopup() {
-            console.log('Closing Popup'); // Debugging line
-            document.getElementById('shift-popup').style.display = 'none';
-        }
-
-        function assignShift(shiftType) {
-            if (!selectedDate) return;
-
-            console.log('Selected Date:', selectedDate); // Debugging line
-            let calendarCells = document.querySelectorAll('.fc-daygrid-day');
-            calendarCells.forEach(cell => {
-                console.log('Cell Date:', cell.getAttribute('data-date')); // Debugging line
-                if (cell.getAttribute('data-date') === selectedDate) {
-                    console.log('Adding class to cell:', shiftType); // Debugging line
-                    cell.classList.remove('morning', 'evening', 'night', 'off');
-                    cell.classList.add(shiftType);
-
-                    let label = cell.querySelector('.shift-label');
-                    if (!label) {
-                        label = document.createElement('div');
-                        label.classList.add('shift-label');
-                        cell.appendChild(label);
-                    }
-
-                    switch (shiftType) {
-                        case 'morning':
-                            label.textContent = 'Morning';
-                            break;
-                        case 'evening':
-                            label.textContent = 'Evening';
-                            break;
-                        case 'night':
-                            label.textContent = 'Night';
-                            break;
-                        case 'off':
-                            label.textContent = 'Off';
-                            break;
-                    }
-                }
-            });
-
-            closePopup();
-        }
     </script>
 
 </body>
