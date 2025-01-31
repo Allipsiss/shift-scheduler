@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقویم شیفت</title>
+
+  <!-- Link to External CSS File -->
+  <link href="styles.css" rel="stylesheet">
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+  
+  <!-- Load B Titr font -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <h1>تقویم شیفت</h1>
+  <button id="print-button" onclick="printCalendar()">چاپ برنامه</button>
+
+  <div id="calendar-container">
+    <div id="calendar"></div>
+  </div>
+
+  <!-- Popup for selecting shift -->
+  <div id="shift-popup" class="popup">
+    <h3>شیفت را انتخاب کنید</h3>
+    <button onclick="setShift('M', 'morning')">صبح (M)</button>
+    <button onclick="setShift('E', 'evening')">عصر (E)</button>
+    <button onclick="setShift('N', 'night')">شب (N)</button>
+    <button onclick="setShift('Off', 'off')">مرخصی (Off)</button>
+    <button class="clear" onclick="clearShift()">پاک کردن</button>
+    <button class="cancel" onclick="closePopup()">لغو</button>
+  </div>
+
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fa.js"></script>
+
+  <!-- Link to External JavaScript File -->
+  <script src="script.js"></script>
+
+</body>
+</html>

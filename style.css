@@ -1,0 +1,106 @@
+body {
+    font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+  h1 {
+    margin-top: 20px;
+    font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+  }
+  
+  #calendar-container {
+    max-width: 900px;
+    margin: 20px auto;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Print Button - Top Right */
+  #print-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  #print-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Popup Styling */
+  .popup {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    text-align: center;
+    font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+  }
+  
+  .popup button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+  }
+  
+  .popup button.cancel {
+    background-color: #f44336;
+  }
+  
+  .popup button.clear {
+    background-color: #ff9800;
+  }
+  
+  /* Styling shift labels */
+  .fc-daygrid-day {
+    position: relative;
+    transition: background-color 0.3s ease;
+  }
+  
+  .shift-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    font-weight: bold;
+    font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+    color: black;
+  }
+  
+  /* Background Colors */
+  .morning { background-color: #cce5ff !important; } /* Pale Blue */
+  .evening { background-color: #fff3cd !important; } /* Pale Yellow */
+  .night { background-color: #e6ccff !important; } /* Pale Purple */
+  .off { background-color: transparent !important; } /* No color */
+  
+  /* Hide elements when printing */
+  @media print {
+    #print-button, .popup {
+      display: none !important;
+    }
+  }
+  
