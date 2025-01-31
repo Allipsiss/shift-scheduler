@@ -96,6 +96,19 @@
       font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
       color: black;
     }
+
+    /* Color for shifts */
+    .morning {
+      background-color: #add8e6; /* Pale blue */
+    }
+
+    .evening {
+      background-color: #fffacd; /* Pale yellow */
+    }
+
+    .night {
+      background-color: #add8e6; /* Pale blue */
+    }
   </style>
 </head>
 <body>
@@ -159,6 +172,7 @@
 
     function updateCalendar() {
       document.querySelectorAll('.shift-label').forEach(el => el.remove());
+      document.querySelectorAll('.fc-daygrid-day').forEach(el => el.classList.remove('morning', 'evening', 'night'));
 
       Object.keys(shifts).forEach(date => {
         const dayCell = document.querySelector(`[data-date="${date}"]`);
@@ -167,6 +181,21 @@
           label.className = 'shift-label';
           label.textContent = shifts[date];
           dayCell.appendChild(label);
+
+          // Add background color based on shift type
+          switch (shifts[date]) {
+            case 'M':
+              dayCell.classList.add('morning');
+              break;
+            case 'E':
+              dayCell.classList.add('evening');
+              break;
+            case 'N':
+              dayCell.classList.add('night');
+              break;
+            default:
+              break;
+          }
         }
       });
     }
