@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shift Scheduler</title>
+    <title>Shift Scheduler (Barname Rizebari)</title>
 
     <!-- FullCalendar CSS (using JSDelivr) -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
 
-    <!-- FullCalendar Persian CSS (for Shamsi calendar) -->
+    <!-- FullCalendar Persian CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar-persian@3.0.1/css/persian.css" rel="stylesheet">
 
     <style>
@@ -44,6 +44,7 @@
 
     <!-- FullCalendar JS (using JSDelivr) -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+
     <!-- FullCalendar Persian JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar-persian@3.0.1/js/persian.js"></script>
 
@@ -60,19 +61,19 @@
             let calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'fa',  // Persian Locale
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                },
+                plugins: ['persian'],  // Add the Persian plugin for Shamsi calendar
                 buttonText: {
                     today: 'Emruz',
                     month: 'Mahal',
                     week: 'Haftegi',
                     day: 'Rooz',
                     list: 'Dastur'
-                },
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
-                },
-                plugins: ['persian'],  // Add the Persian plugin
+                }
             });
 
             // Render the calendar
