@@ -140,24 +140,10 @@
       const calendarEl = document.getElementById('calendar');
       calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        locale: 'fa',
-        firstDay: 6, // Saturday as the first day of the week
+        locale: 'persianJalali',
         dateClick: function(info) {
           selectedDate = info.dateStr;
           showPopup();
-        },
-
-        // Add visibleRange to specify the visible date range
-        visibleRange: function(currentDate) {
-          // Calculate the first and last days of the current month
-          const startOfMonth = currentDate.clone().startOf('month');
-          const endOfMonth = currentDate.clone().endOf('month');
-
-          // Return the range as an object with start and end properties
-          return {
-            start: startOfMonth.format('YYYY-MM-DD'),
-            end: endOfMonth.format('YYYY-MM-DD')
-          };
         }
       });
 
