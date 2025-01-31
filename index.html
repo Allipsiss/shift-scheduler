@@ -141,6 +141,7 @@
       calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'fa',
+        firstDay: 0,
         dateClick: function(info) {
           selectedDate = info.dateStr;
           showPopup();
