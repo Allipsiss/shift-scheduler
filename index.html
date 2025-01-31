@@ -1,87 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shift Scheduler (Barname Rizebari)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقویم شیفت</title>
 
-    <!-- FullCalendar CSS (using JSDelivr) -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" rel="stylesheet">
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+  
+  <!-- Load B Titr font -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@700&display=swap" rel="stylesheet">
 
-    <!-- FullCalendar Persian CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
 
-    <style>
-        body {
-            font-family: 'Times New Roman', serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+    h1 {
+      margin-top: 20px;
+      font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+    }
 
-        h1 {
-            margin-top: 20px;
-        }
+    #calendar {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-        #calendar-container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+    /* Popup Styling */
+    .popup {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+      text-align: center;
+      font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+    }
+
+    .popup button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+    }
+
+    .popup button:hover {
+      background-color: #45a049;
+    }
+
+    .popup button.cancel {
+      background-color: #f44336;
+    }
+
+    .popup button.cancel:hover {
+      background-color: #e53935;
+    }
+
+    .popup button.clear {
+      background-color: #ff9800;
+    }
+
+    .popup button.clear:hover {
+      background-color: #fb8c00;
+    }
+
+    /* Styling shift labels */
+    .fc-daygrid-day {
+      position: relative;
+    }
+
+    .shift-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 22px;
+      font-weight: bold;
+      font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
+      color: black;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>Shift Scheduler (Barname Rizebari)</h1>
+  <h1>تقویم شیفت</h1>
+  <div id="calendar"></div>
 
-    <div id="calendar-container">
-        <div id="calendar"></div>
-    </div>
+  <!-- Popup for selecting shift -->
+  <div id="shift-popup" class="popup">
+    <h3>شیفت را انتخاب کنید</h3>
+    <button onclick="setShift('M')">صبح (M)</button>
+    <button onclick="setShift('E')">عصر (E)</button>
+    <button onclick="setShift('N')">شب (N)</button>
+    <button onclick="setShift('Off')">مرخصی (Off)</button>
+    <button class="clear" onclick="clearShift()">پاک کردن</button>
+    <button class="cancel" onclick="closePopup()">لغو</button>
+  </div>
 
-    <!-- FullCalendar JS (using JSDelivr) -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fa.js"></script>
 
-    <!-- FullCalendar Persian JS -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <script>
+    let calendar;
+    let selectedDate = null;
+    let shifts = {}; // Store shifts for each date
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let calendarEl = document.getElementById('calendar');
-            
-            // Check if the calendar container exists
-            if (!calendarEl) {
-                console.error('Calendar container not found!');
-                return;
-            }
+    document.addEventListener('DOMContentLoaded', function() {
+      const calendarEl = document.getElementById('calendar');
+      calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'fa',
+        dateClick: function(info) {
+          selectedDate = info.dateStr;
+          showPopup();
+        }
+      });
 
-            let calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'fa',  // Persian Locale
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
-                },
-                plugins: ['persian'],  // Add the Persian plugin for Shamsi calendar
-                buttonText: {
-                    today: 'Emruz',
-                    month: 'Mahal',
-                    week: 'Haftegi',
-                    day: 'Rooz',
-                    list: 'Dastur'
-                }
-            });
+      calendar.render();
+    });
 
-            // Render the calendar
-            calendar.render();
+    function showPopup() {
+      document.getElementById('shift-popup').style.display = 'block';
+    }
 
-            console.log('Calendar rendered with Shamsi (Persian) dates');
-        });
-    </script>
+    function setShift(shiftType) {
+      shifts[selectedDate] = shiftType;
+      closePopup();
+      updateCalendar();
+    }
+
+    function clearShift() {
+      delete shifts[selectedDate];
+      closePopup();
+      updateCalendar();
+    }
+
+    function closePopup() {
+      document.getElementById('shift-popup').style.display = 'none';
+    }
+
+    function updateCalendar() {
+      document.querySelectorAll('.shift-label').forEach(el => el.remove());
+
+      Object.keys(shifts).forEach(date => {
+        const dayCell = document.querySelector(`[data-date="${date}"]`);
+        if (dayCell) {
+          let label = document.createElement('div');
+          label.className = 'shift-label';
+          label.textContent = shifts[date];
+          dayCell.appendChild(label);
+        }
+      });
+    }
+  </script>
 
 </body>
 </html>
