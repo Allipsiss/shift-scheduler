@@ -6,7 +6,9 @@
   <title>تقویم شیفت</title>
 
   <!-- FullCalendar CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+<link href='css/fullcalendar.css' rel='stylesheet' />
+
   
   <!-- Load B Titr font -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@700&display=swap" rel="stylesheet">
@@ -87,15 +89,14 @@
     }
 
     .shift-label {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 22px;
-      font-weight: bold;
-      font-family: 'B Titr', 'Noto Naskh Arabic', sans-serif;
-      color: black;
-    }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
 
     /* Color for shifts */
     .morning {
@@ -128,27 +129,47 @@
   </div>
 
   <!-- FullCalendar JS -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fa.js"></script>
+  <script src='js/moment.min.js'></script>
+<script src='js/moment-jalaali.js'></script>
+<script src='js/jquery.min.js'></script>
+<script src='js/jquery-ui.min.js'></script>
+<script src='js/fullcalendar.min.js'></script>
+<script src='js/fa.js'></script>
+<script>
+  let shifts = {}; // Initialize the shifts object
+  let selectedDate = null; // Track selected date
+  $(document).ready(function() {
 
-  <script>
-    let calendar;
-    let selectedDate = null;
-    let shifts = {}; // Store shifts for each date
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,basicWeek,basicDay'
+      },
+      locale: 'fa',
+      isJalaali: true,
+      isRTL: true,
+      navLinks: true, // can click day/week names to navigate views
+      editable: true,
+      eventLimit: true, // allow "more" link when too many events
+      dayClick: function(date, jsEvent, view) {
+    // Get the clicked day cell
+    const clickedCell = $(jsEvent.target); // This is the clicked cell
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const calendarEl = document.getElementById('calendar');
-      calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'fa-IR',
-        dateClick: function(info) {
-          selectedDate = info.dateStr;
-          showPopup();
-        }
-      });
+    // Get the data-date attribute from the clicked cell
+    const cellDate = clickedCell.attr('data-date');
+    console.log("Clicked cell's data-date:", cellDate); // Log the Persian date from the data-date attribute
 
-      calendar.render();
+    // Now use the data-date for setting the selectedDate
+    selectedDate = cellDate; // Set selected date from the data-date
+
+    // Log the selected date
+    console.log("Selected date:", selectedDate); // Debugging
+      showPopup(); // Show the shift selection popup
+       }
     });
+
+  });
 
     function showPopup() {
       document.getElementById('shift-popup').style.display = 'block';
@@ -156,49 +177,83 @@
 
     function setShift(shiftType) {
       shifts[selectedDate] = shiftType;
+      console.log("Shifts Object:", shifts); // Debugging
       closePopup();
       updateCalendar();
     }
 
     function clearShift() {
-      delete shifts[selectedDate];
-      closePopup();
-      updateCalendar();
+    delete shifts[selectedDate];
+    closePopup();
+    
+    // Remove the shift label and color classes
+    const dayCell = document.querySelector(`[data-date="${selectedDate}"]`);
+
+    if (dayCell) {
+      // Remove the shift label
+      const label = dayCell.querySelector('.shift-label');
+      if (label) {
+        label.remove();
+      }
+
+      // Remove the color classes
+      dayCell.classList.remove('morning', 'evening', 'night', 'off');
     }
+
+    updateCalendar();
+  }
+
 
     function closePopup() {
       document.getElementById('shift-popup').style.display = 'none';
     }
 
     function updateCalendar() {
-      document.querySelectorAll('.shift-label').forEach(el => el.remove());
-      document.querySelectorAll('.fc-daygrid-day').forEach(el => el.classList.remove('morning', 'evening', 'night'));
+  // Remove previous labels and applied colors
+  document.querySelectorAll('.shift-label').forEach(el => el.remove());
+  document.querySelectorAll('.fc-daygrid-day').forEach(el => el.classList.remove('morning', 'evening', 'night', 'off'));
 
-      Object.keys(shifts).forEach(date => {
-        const dayCell = document.querySelector(`[data-date="${date}"]`);
-        if (dayCell) {
-          let label = document.createElement('div');
-          label.className = 'shift-label';
-          label.textContent = shifts[date];
-          dayCell.appendChild(label);
+  Object.keys(shifts).forEach(date => {
+    // Log the date to ensure it's in the Persian format
+    console.log("Checking date in shifts object:", date); // <-- Check Persian date
 
-          // Add background color based on shift type
-          switch (shifts[date]) {
-            case 'M':
-              dayCell.classList.add('morning');
-              break;
-            case 'E':
-              dayCell.classList.add('evening');
-              break;
-            case 'N':
-              dayCell.classList.add('night');
-              break;
-            default:
-              break;
-          }
-        }
-      });
+    // Use Persian date directly (e.g., ۱۴۰۳-۱۱-۰۲)
+    const dayCell = document.querySelector(`[data-date="${date.trim()}"]`); 
+
+    console.log("Day cell found:", dayCell); // <-- Check if day cell is found
+
+    if (dayCell) {
+      console.log("Appending label to:", dayCell);
+  let label = document.createElement('div');
+  label.className = 'shift-label';
+  label.textContent = shifts[date]; // The shift label (M, E, N, Off)
+  console.log("still ok label to:", dayCell);
+  console.log("Selected date:", date);
+  dayCell.appendChild(label); // Append the label
+
+      // Apply the correct color based on the shift type
+      switch (shifts[date]) {
+        case 'M':
+          dayCell.classList.add('morning');
+          break;
+        case 'E':
+          dayCell.classList.add('evening');
+          break;
+        case 'N':
+          dayCell.classList.add('night');
+          break;
+        case 'Off':
+          dayCell.classList.add('off');
+          break;
+        default:
+          break;
+      }
+    } else {
+      console.log("Day cell not found for:", date); // <-- Log Persian date if the day cell is not found
     }
+  });
+}
+  
   </script>
 
 </body>
